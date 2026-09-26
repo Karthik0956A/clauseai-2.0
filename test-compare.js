@@ -12,7 +12,7 @@ async function testCompare() {
     form.append('fileA', fs.createReadStream('docA.txt'));
     form.append('fileB', fs.createReadStream('docB.txt'));
 
-    console.log('Sending request to /api/compare...');
+    console.log('Sending request to /api/compare. A signed-in session cookie and the FastAPI service are required.');
     try {
         const response = await fetch('http://localhost:3000/api/compare', {
             method: 'POST',
