@@ -14,7 +14,10 @@ interface ComparisonResult {
         difference: string;
         riskLevel: "High" | "Medium" | "Low";
         riskAnalysis: string;
+        changeType?: string;
+        materialChange?: boolean;
     }[]
+    unchangedCount?: number
 }
 
 export default function AgreementComparator() {
@@ -148,13 +151,23 @@ export default function AgreementComparator() {
             {result && result.clauses && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-10 duration-700">
                     <h3 className="text-2xl font-semibold text-white">Comparison Analysis</h3>
+                    {typeof result.unchangedCount === "number" && (
+                      <p className="text-neutral-400 text-sm">{result.unchangedCount} clauses were semantically unchanged.</p>
+                    )}
                     {result.clauses.map((clause, idx) => (
                         <Card key={idx} className="bg-neutral-800/50 border-neutral-700 overflow-hidden">
                             <div className="p-4 border-b border-neutral-700 bg-neutral-900/50 flex justify-between items-center">
                                 <h4 className="text-lg font-medium text-white">{clause.title}</h4>
-                                <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getRiskColor(clause.riskLevel)}`}>
-                                    {clause.riskLevel} Risk
-                                </span>
+                                <div className="flex gap-2">
+                                    {clause.changeType && (
+                                        <span className="px-3 py-1 rounded-full text-xs font-bold border border-neutral-600 text-neutral-200">
+                                            {clause.materialChange ? "Material Risk" : clause.changeType}
+                                        </span>
+                                    )}
+                                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getRiskColor(clause.riskLevel)}`}>
+                                        {clause.riskLevel} Risk
+                                    </span>
+                                </div>
                             </div>
                             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="bg-red-500/5 p-4 rounded-lg border border-red-500/10">
