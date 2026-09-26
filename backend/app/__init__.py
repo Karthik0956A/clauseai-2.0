@@ -1,0 +1,1 @@
+"""ClauseAI FastAPI application."""
