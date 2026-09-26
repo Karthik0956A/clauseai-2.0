@@ -22,6 +22,7 @@ export default function DocumentUploader({ onUploadComplete }: DocumentUploaderP
   const [isDragging, setIsDragging] = useState(false)
   const [uploadedDocs, setUploadedDocs] = useState<UploadedDocument[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const [stages, setStages] = useState<string[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -71,6 +72,7 @@ export default function DocumentUploader({ onUploadComplete }: DocumentUploaderP
       const data = await res.json();
 
       if (data.success && data.file) {
+        setStages(data.stages || ["ready"])
         setUploadedDocs((prev) => prev.map((doc) => (newDocs.find(d => d.name === doc.name) ? { ...doc, status: "completed" } : doc)))
         if (onUploadComplete) {
           onUploadComplete(data.file);
@@ -106,7 +108,12 @@ export default function DocumentUploader({ onUploadComplete }: DocumentUploaderP
       >
         <div className="text-6xl mb-4">📄</div>
         <h3 className="text-2xl font-bold text-white mb-2">Upload Your Document</h3>
-        <p className="text-neutral-400 mb-8">PDF, Image, or Text • Maximum 50MB</p>
+        <p className="text-neutral-400 mb-4">PDF, image, or text • Maximum 20MB</p>
+        {stages.length > 0 && (
+          <p className="text-cyan-300 text-sm mb-6">
+            {stages.join(" → ")}
+          </p>
+        )}
         <input
           ref={fileInputRef}
           type="file"
