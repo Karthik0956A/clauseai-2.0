@@ -1,0 +1,32 @@
+{
+  "questions": [
+    {
+      "id": "termination-notice",
+      "question": "How much notice is required to terminate?",
+      "expected_page": 14,
+      "expected_section": "8.2",
+      "expected_evidence": "30 days"
+    },
+    {
+      "id": "liability-cap",
+      "question": "Is liability capped?",
+      "expected_page": 22,
+      "expected_section": "12.3",
+      "expected_evidence": "unlimited"
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "equivalent-cap",
+      "left": "Liability shall not exceed $1 million.",
+      "right": "Liability shall be limited to $1 million.",
+      "material_change": false
+    },
+    {
+      "id": "unlimited",
+      "left": "Liability capped at $1 million.",
+      "right": "Liability is unlimited.",
+      "material_change": true
+    }
+  ]
+}

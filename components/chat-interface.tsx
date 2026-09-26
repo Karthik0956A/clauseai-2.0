@@ -24,11 +24,18 @@ interface ChatInterfaceProps {
   initialConversationId?: string | null
 }
 
+interface Citation {
+  page: number | null
+  section: string
+  section_title?: string
+}
+
 interface ChatMessage {
   id: number
   role: "user" | "assistant" | "system"
   content: string
   timestamp: string
+  citations?: Citation[]
 }
 
 export default function ChatInterface({ uploadedFile: initialUploadedFile, initialConversationId = null }: ChatInterfaceProps) {
@@ -479,6 +486,7 @@ export default function ChatInterface({ uploadedFile: initialUploadedFile, initi
           role: "assistant",
           content: data.response,
           timestamp: new Date().toLocaleTimeString(),
+          citations: data.citations || [],
         }
         setMessages((prev) => [...prev, assistantMessage])
       } else {
@@ -582,6 +590,15 @@ export default function ChatInterface({ uploadedFile: initialUploadedFile, initi
                       }`}
                   >
                     <ReactMarkdown>{message.content}</ReactMarkdown>
+                    {message.citations && message.citations.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {message.citations.map((citation, index) => (
+                          <span key={index} className="text-xs px-2 py-1 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/30">
+                            Page {citation.page ?? "?"} — Section {citation.section} {citation.section_title || ""}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                     {message.role === 'assistant' && (
                       <div className="mt-2 flex justify-end">
@@ -708,6 +725,9 @@ export default function ChatInterface({ uploadedFile: initialUploadedFile, initi
                             }`}>{item.severity}/10</span>
                         </div>
                         <p className="text-sm text-neutral-400">{item.description}</p>
+                        {(item.page || item.section) && (
+                          <p className="text-xs text-cyan-300 mt-1">Page {item.page ?? "?"} — Section {item.section || "n/a"}</p>
+                        )}
                         {item.impact && <p className="text-xs text-neutral-500 mt-1">Impact: {item.impact}</p>}
                       </div>
                     </div>
