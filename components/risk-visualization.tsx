@@ -42,6 +42,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 <div className="space-y-2 text-sm">
                     <p className="text-neutral-300"><span className="text-neutral-500 text-xs uppercase font-bold">Clause:</span> "{data.text}"</p>
                     <p className="text-white"><span className="text-neutral-500 text-xs uppercase font-bold">Risk:</span> {data.description}</p>
+                    {(data.page || data.section) && (
+                      <p className="text-cyan-300 text-xs">Page {data.page ?? "?"} — Section {data.section || "n/a"}</p>
+                    )}
                     <div className="flex justify-between items-center pt-2 border-t border-neutral-800 mt-2">
                         <span className="text-neutral-400 text-xs">Impact: {data.impact}</span>
                         <span className="text-neutral-400 text-xs font-bold">Severity: {data.severity}/10</span>
