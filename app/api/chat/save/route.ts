@@ -3,11 +3,19 @@ import { verifySessionToken } from "@/lib/auth";
 import dbConnect from "@/lib/db";
 import Conversation from "@/models/Conversation";
 import { cookies } from "next/headers";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import mongoose from 'mongoose';
 
-function generateTitle(firstMessage: string) {
-    const words = firstMessage.replace(/\s+/g, " ").trim().split(" ").slice(0, 6).join(" ");
-    return words || "New Legal Conversation";
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
+
+async function generateTitle(firstMessage: string) {
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const result = await model.generateContent(`Generate a very short, 3-5 word title for a legal conversation starting with this message: "${firstMessage}". Return ONLY the title, no quotes.`);
+        return result.response.text().trim();
+    } catch (e) {
+        return "New Legal Conversation"; // Fallback
+    }
 }
 
 export async function POST(req: NextRequest) {
@@ -52,7 +60,7 @@ export async function POST(req: NextRequest) {
             // Create new
             // Generate title from the first user message
             const firstUserMsg = messages.find((m: any) => m.role === 'user');
-            title = firstUserMsg ? generateTitle(firstUserMsg.content) : "New Chain";
+            title = firstUserMsg ? await generateTitle(firstUserMsg.content) : "New Chain";
 
             conversation = await Conversation.create({
                 userId: userId,
